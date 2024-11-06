@@ -9,3 +9,8 @@ t = tags the image
  ```docker run -d -p 3000:3000 getting-started```  
 d = detached mode, runs in backround  
 p = hostport:containerport
+
+
+## stop, rm, kill
+- docker stop + docker rm: Gracefully stops a container, then removes it.
+- docker kill + docker rm: Abruptly kills a container, then removes it (useful for unresponsive containers).
