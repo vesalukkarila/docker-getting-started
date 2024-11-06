@@ -28,7 +28,7 @@ p = hostport:containerport
 Once image is pushed to registry, one can also run it here:  
 https://labs.play-with-docker.com/
 
-### Volume
+### Named Volume
 Persists data on host system, even if container itself is stopped and removed. 
 The volume is outside the container, on the host machine in a Docker managed location.  
 - Create and name the volume:  
@@ -41,4 +41,23 @@ Here the volume (from the host system) is mounted to /etc/todos (path inside the
 
 To inspect where the volume actually is:
 ```docker volume inspect```
+
+### Bind mounts
+(return to this with Java)  
+With bind mounts, we control the exact mountpoint on the host.  
+We can use this to persist data, but is often used to provide additional data into containers.  
+When working on an application, **we can use a bind mount to mount our source code into the container to let it see code changes, respond, and let us see the changes right away.**  
+
+In the tutorial:  
+Mount source code into the container  
+Install all dependencies, including the "dev" depenedencies  
+Start nodemon to watch for filesystem changes  
+- -w /app - sets the container's present working directory where the command will run from
+- -v "$(pwd):/app" - bind mount (link) the host's present getting-started/app directory to the container's /app directory. Note: Docker requires absolute paths for binding mounts, so in this example we use pwd for printing the absolute path of the working directory, i.e. the app directory, instead of typing it manually
+```
+docker run -dp 3000:3000 \
+    -w /app -v "$(pwd):/app" \
+    node:18-alpine \
+    sh -c "yarn install && yarn run dev"
+  ```  
 
