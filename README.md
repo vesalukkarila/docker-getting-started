@@ -28,3 +28,17 @@ p = hostport:containerport
 Once image is pushed to registry, one can also run it here:  
 https://labs.play-with-docker.com/
 
+### Volume
+Persists data on host system, even if container itself is stopped and removed. 
+The volume is outside the container, on the host machine in a Docker managed location.  
+- Create and name the volume:  
+```docker volume create todo-db```  
+
+Here the volume (from the host system) is mounted to /etc/todos (path inside the container) with -v flag
+- any data read from or written to this path is saved in the volume on the host
+- every new container needs to be started with the same ```-v ...``` configuration to give access to the same data  
+```docker run -dp 3000:3000 -v todo-db:/etc/todos getting-started```  
+
+To inspect where the volume actually is:
+```docker volume inspect```
+
