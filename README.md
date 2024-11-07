@@ -1,6 +1,6 @@
 # docker-getting-started
 This repo was started while going through Docker's "Getting started" and commits follow tutorial step by step.  
-This readme will function as a notebook where I can collect useful information in the future when I learn more about Docker.  
+This readme will function as a notebook where I can collect useful information also in the future when I learn more about Docker.  
 ## build image from Dockerfile
 ```docker build -t <imagename> .```  
 t = tags the image  
@@ -8,7 +8,7 @@ t = tags the image
 
  ## run the image in container
  ```docker run -d -p 3000:3000 <imagename>```  
--d = detached mode, runs in backround  
+-d = detached mode, runs in background  
 -p = hostport:containerport
 
 ## Commands
