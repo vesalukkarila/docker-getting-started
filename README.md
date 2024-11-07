@@ -114,3 +114,33 @@ Connecting our app to network and inside that to the container holding previousl
 ```docker compose up -d```, detached runs in the background    
 ```docker compose logs -f```, follows, gives live output
 ```docker compose down```, shutdown and network removed, volumes are kept
+
+
+## Image Building Best Practices  
+```docker scan <imagename>```, scan vulnerabilities    
+```docker image history <imagename>```, see commands that were used to create each layer within an image    
+
+### Caching layers  
+See updated Dockerfile, .dockerignore added.  
+
+### Multi-stage builds
+Separate build-time dependencies from runtime dependencies.  
+Reduce overall image size by shipping only what your app needs to run.
+
+In  short:  
+- JDK and Maven are used only in build stage to compile and create .jar
+- By separating build and runtime stage the final image size will be reduced, by excluding unnecessary dependencies(JDK, Maven..)  
+- Final image is only the last stage being created, including only the runtime environment and the application artifact(.jar)  
+```
+# Build stage
+FROM maven:3.8.1-jdk-11 AS build
+WORKDIR /app
+COPY . .
+RUN mvn clean package
+
+# Runtime stage
+FROM openjdk:11-jre-slim
+WORKDIR /app
+COPY --from=build /app/target/myapp.jar /app/myapp.jar
+CMD ["java", "-jar", "/app/myapp.jar"]
+```  
