@@ -1,12 +1,13 @@
 # docker-getting-started
-
+This repo was started while going through Docker's "Getting started" and commits follow tutorial step by step.  
+This readme will function as a notebook where I can collect useful information in the future when I learn more about Docker.  
 ## build image from Dockerfile
-```docker build -t getting-started .```  
+```docker build -t <imagename> .```  
 t = tags the image  
 . = docker should look for Dockerfile in this folder.
 
  ## run the image in container
- ```docker run -d -p 3000:3000 getting-started```  
+ ```docker run -d -p 3000:3000 <imagename>```  
 -d = detached mode, runs in backround  
 -p = hostport:containerport
 
@@ -21,10 +22,11 @@ t = tags the image
 ```docker exec [OPTIONS] container commands [arg]```, allows to execute commands in container without stopping or restarting it
 ### push to docker hub registry
 - the image needs to tagged as ```username/imagename[:tag]```, where username is Docker Hub username.  
+  ```docker tag imagename vesalukkarila/imagename:latest```
+
 - to avoid re-tagging, the image should be tagged correctly when building the image from Dockerfile.  
-```docker tag imagename vesalukkarila/imagename:latest```
 - push to docker hub registry  
-```docker push vesalukkarila/imagename:latest```
+  ```docker push vesalukkarila/imagename:latest```
 
 ### Play with docker
 Once image is pushed to registry, one can also run it here:  
@@ -69,8 +71,11 @@ More general example:
 ```docker run -v /path/to/your/source:/path/in/container my-image```
 
 ## Multi-Container Apps
-### CLI way
 If two containers are on the same network, they can talk to each other. If they aren't, they can't.  
+In short: 
+- Create a network over which containers can communicate  
+- Connect containers inside that network    
+### CLI way
 
 Creating a custom Docker network. Allows containers to communicate over dedicated network.  
 ```docker network create <network_name>```, network-name=todo-app in tutorial
