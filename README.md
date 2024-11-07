@@ -17,6 +17,8 @@ t = tags the image
 ```docker stop <container_name_or_id> ```+```docker rm <container_name_or_id>```: Gracefully stops a container, then removes it.  
 ```docker kill <container_name_or_id>```+```docker rm <container_name_or_id>```: Abruptly kills a container, then removes it (useful for unresponsive containers).  
 ```docker stop $(docker ps -q)```, docker ps -q lists the IDs of all running containers.  
+```docker logs <container-id>```, logs for container  
+```docker exec [OPTIONS] container commands [arg]```, allows to execute commands in container without stopping or restarting it
 ### push to docker hub registry
 - the image needs to tagged as ```username/imagename[:tag]```, where username is Docker Hub username.  
 - to avoid re-tagging, the image should be tagged correctly when building the image from Dockerfile.  
@@ -66,3 +68,41 @@ docker run -dp 3000:3000 \
 More general example:  
 ```docker run -v /path/to/your/source:/path/in/container my-image```
 
+### Multi-Container Apps  
+If two containers are on the same network, they can talk to each other. If they aren't, they can't.  
+
+Creating a custom Docker network. Allows containers to communicate over dedicated network.  
+```docker network create <network_name>```, network-name=todo-app in tutorial
+
+--network todo-app, connects the container (run from the image mysql:8.0) to network  
+--network-alias mysql, sets alias for the container on the todo-app network  
+-v todo-mysql-data:/var/lib/mysql, named volume for data persistance
+-e MYSQL_ROOT_PASSWORD=secret: Sets the root password for MySQL to secret, required for MySQL setup  
+-e MYSQL_DATABASE=todos: Creates a new database named todos automatically when the container starts  
+```
+docker run -d \
+    --network todo-app --network-alias mysql \
+    -v todo-mysql-data:/var/lib/mysql \
+    -e MYSQL_ROOT_PASSWORD=secret \
+    -e MYSQL_DATABASE=todos \
+    mysql:8.0
+   ``` 
+    
+
+nicolaka/netshoot container, which has a lot of tools, can be used to troubleshooting and debuggin networking issues.  
+```docker run -it --network todo-app nicolaka/netshoot```  
+dig is a DNS tool, will show ip-address of the hostname mysql  
+```dig mysql``` 
+
+Connecting our app to network and inside that to the container holding previously created database.
+
+```docker run -dp 3000:3000 \
+  -w /app -v "$(pwd):/app" \
+  --network todo-app \
+  -e MYSQL_HOST=mysql \
+  -e MYSQL_USER=root \
+  -e MYSQL_PASSWORD=secret \
+  -e MYSQL_DB=todos \
+  vesalukkarila/getting-started  \
+  sh -c "yarn install && yarn run dev"
+  ```
