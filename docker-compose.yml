@@ -1,0 +1,32 @@
+services:                      # List of services (containers) that are part of our application
+  app:                        # Name of the first service, can be any name. This name also becomes the network alias.
+    image: vesalukkarila/getting-started     # Image to use for this service (node.js version 18 on Alpine Linux)
+    command: sh -c "yarn install && yarn run dev"  # Command to run inside the container when it starts
+    ports:                    # Port mapping, using short syntax. Maps port 3000 on the container to port 3000 on the host.
+      - 3000:3000
+    working_dir: /app         # Set the working directory inside the container for the command to run
+    volumes:                  # Bind mount, the current directory is mapped to /app in the container.
+      - ./:/app               # this will reflect source code changes into the container
+    environment:              # Defining environment variables to be used by the container
+      MYSQL_HOST: mysql       # Hostname of the MySQL container (service name is used as the hostname)
+      MYSQL_USER: root        # MySQL root user
+      MYSQL_PASSWORD: secret  # MySQL root password
+      MYSQL_DB: todos           # MySQL database to use
+
+  mysql:                      # Name of the MySQL service (this also becomes the network alias automatically)
+    image: mysql:8.0          # MySQL image (version 8.0)
+    volumes:                  # Named volume. Specifying volume mount for MySQL data persistence
+      - todo-mysql-data:/var/lib/mysql  # Persist MySQL data using a named volume
+    environment:               # Environment variables used by the MySQL service
+      MYSQL_ROOT_PASSWORD: secret  # Sets the MySQL root password for initialization
+      MYSQL_DATABASE: todos        # Creates a new database named "todos" if it does not already exist
+
+
+
+volumes:                      # Define volumes at the top level. Named volumes are declared here.
+  todo-mysql-data:            # This is a named volume that MySQL will use to store its data persistently.
+
+# app and mysql are both on the same network (created by Docker Compose). app uses MYSQL_HOST to find database service
+# and connect to it. It then uses other environment variables to authenticate and use the todos database.
+# If "todos" database doesn't exist, it will be created.
+# Environment variables (mandatory and optional) are explained by image's maintainers on Docker Hub

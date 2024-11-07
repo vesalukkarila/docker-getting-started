@@ -68,7 +68,8 @@ docker run -dp 3000:3000 \
 More general example:  
 ```docker run -v /path/to/your/source:/path/in/container my-image```
 
-### Multi-Container Apps  
+## Multi-Container Apps
+### CLI way
 If two containers are on the same network, they can talk to each other. If they aren't, they can't.  
 
 Creating a custom Docker network. Allows containers to communicate over dedicated network.  
@@ -106,3 +107,10 @@ Connecting our app to network and inside that to the container holding previousl
   vesalukkarila/getting-started  \
   sh -c "yarn install && yarn run dev"
   ```
+
+### Docker Compose way, the easier one
+- See heavily annotated docker-compose.yml
+
+```docker compose up -d```, detached runs in the background    
+```docker compose logs -f```, follows, gives live output
+```docker compose down```, shutdown and network removed, volumes are kept
